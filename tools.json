@@ -1,0 +1,20 @@
+{
+  "winget": [
+    { "id": "Git.Git", "command": "git" },
+    { "id": "GitHub.cli", "command": "gh" },
+    { "id": "jdx.mise", "command": "mise" },
+    { "id": "pnpm.pnpm", "command": "pnpm" },
+    { "id": "Microsoft.PowerShell", "command": "pwsh" },
+    { "id": "zizmor.zizmor", "command": "zizmor" },
+    { "id": "rhysd.actionlint", "command": "actionlint" },
+    { "id": "max-sixty.worktrunk", "command": "git-wt" },
+    { "id": "Docker.DockerDesktop", "command": "docker" },
+    { "id": "Helm.Helm", "command": "helm" },
+    { "id": "AgileBits.1Password" },
+    { "id": "JetBrains.Toolbox" },
+    { "id": "Microsoft.VisualStudioCode", "command": "code" }
+  ],
+  "scripts": [
+    { "name": "Claude Code", "command": "claude", "url": "https://claude.ai/install.ps1" }
+  ]
+}

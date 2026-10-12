@@ -26,3 +26,6 @@ jobs:
 
       - name: Run tests
         run: node --test "test/*.test.mjs"
+
+      - name: Test bootstrap helpers
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File test/windows.test.ps1
