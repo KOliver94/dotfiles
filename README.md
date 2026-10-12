@@ -23,6 +23,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1
 node sync.mjs deploy --force
 ```
 
+Anything built on the removed Python keeps pointing at it: run `pre-commit install` again in every repo with a pre-commit hook (otherwise the hook starts a dead interpreter and commits fail), and recreate virtual environments with uv. Close editors first; a language server running on the old Python blocks its uninstall.
+
 ## Daily loop
 
 ```bash
