@@ -21,6 +21,13 @@ function Add-PathEntryBefore([string]$Path, [string]$Entry, [string]$Anchor) {
     $result -join ';'
 }
 
+# $Sources is every match on PATH in search order; the first one is what runs.
+function Get-ShimProblem([string]$Name, [string[]]$Sources, [string]$ShimsDir) {
+    if (-not $Sources -or $Sources.Count -eq 0) { return "$Name not found on PATH" }
+    if ((Resolve-PathKey (Split-Path $Sources[0] -Parent)) -eq (Resolve-PathKey $ShimsDir)) { return $null }
+    "$Name resolves to $($Sources[0]) before mise's shim"
+}
+
 function Get-UserPath {
     (Get-Item -Path 'HKCU:\Environment').GetValue('Path', '', 'DoNotExpandEnvironmentNames')
 }

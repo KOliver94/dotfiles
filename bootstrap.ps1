@@ -78,6 +78,16 @@ Invoke-Step 'node sync.mjs deploy' {
     if ($LASTEXITCODE -ne 0) { $failures.Add('sync deploy (see node sync.mjs check)') }
 }
 
+# Windows searches the system PATH before the user PATH, so a system-wide install or a WindowsApps alias there silently beats the shims.
+if (-not $DryRun) {
+    Update-SessionPath
+    foreach ($name in 'node', 'python', 'uv', 'pre-commit') {
+        $sources = @(Get-Command $name -All -CommandType Application -ErrorAction SilentlyContinue | ForEach-Object { $_.Source })
+        $problem = Get-ShimProblem $name $sources $shims
+        if ($problem) { $failures.Add($problem) }
+    }
+}
+
 Write-Host ''
 Write-Host 'Manual steps:'
 Write-Host '  gh auth login'

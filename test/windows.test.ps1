@@ -18,4 +18,11 @@ Assert-Equal (Add-PathEntryBefore "C:\a;$appsExpanded" $shims $apps) "C:\a;$shim
 Assert-Equal (Add-PathEntryBefore "C:\a;;%USERPROFILE%\bin" $shims $apps) "$shims;C:\a;%USERPROFILE%\bin" 'keeps %VAR% entries, drops empties, goes first without the anchor'
 Assert-Equal (Add-PathEntryBefore '' $shims $apps) $shims 'empty PATH'
 
+$shimsDir = "$env:LOCALAPPDATA\mise\shims"
+$stub = "$env:LOCALAPPDATA\Microsoft\WindowsApps\python.exe"
+Assert-Equal (Get-ShimProblem 'python' @("$shimsDir\python.exe", $stub) $shims) $null 'the shim comes first'
+Assert-Equal (Get-ShimProblem 'python' @("$($shimsDir.ToUpperInvariant())\python.exe") "$shimsDir\") $null 'case and a trailing backslash do not matter'
+Assert-Equal (Get-ShimProblem 'python' @($stub, "$shimsDir\python.exe") $shims) "python resolves to $stub before mise's shim" 'something ahead of the shim is reported'
+Assert-Equal (Get-ShimProblem 'node' @() $shims) 'node not found on PATH' 'a missing command is reported'
+
 if ($script:failed) { exit 1 }
