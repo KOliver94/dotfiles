@@ -4,7 +4,7 @@ These apply in every repo and override plugin and skill defaults (e.g. a skill's
 
 ## Me
 - Senior engineer, native Hungarian speaker. Be terse; explain only what is non-obvious: hidden decisions, gaps, risks.
-- Hungarian UI copy must read naturally, not as a translation of an English idea.
+- Hungarian UI copy must read naturally, not as a translation of an English idea; flag uncertain word choices so I can pick.
 
 ## Workflow
 - Work in small steps. Stop after each step for my review and propose a one-line commit message. Never commit, push, open PRs or change remote or GitHub settings yourself.
