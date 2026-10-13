@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { formatJson } from "../lib/content.mjs";
-import { capture, deploy, inspect, summarize } from "../lib/sync.mjs";
+import { capture, deploy, inspect, pluginBlocker, summarize } from "../lib/sync.mjs";
 
 const tmp = () => mkdtempSync(join(tmpdir(), "dotfiles-"));
 function put(root, path, text) {
@@ -24,6 +24,19 @@ function fixture() {
 }
 const statuses = (results) => Object.fromEntries(results.map((r) => [r.target.home, r.status]));
 const allInSync = (repo, home) => inspect(repo, home).every((r) => r.status === "in-sync");
+const git = (repo, ...args) =>
+  spawnSync("git", ["-C", repo, "-c", "core.autocrlf=false", "-c", "commit.gpgsign=false", "-c", "user.name=t", "-c", "user.email=t@example.com", ...args], { encoding: "utf8" });
+function committed(repo) {
+  git(repo, "init", "-q", "-b", "main");
+  git(repo, "add", "-A");
+  git(repo, "commit", "-qm", "init");
+}
+// Both sides moved away from the baseline: the repo file in the clone, the machine file in the home.
+function conflictOnClaudeMd(repo, home) {
+  deploy(repo, home);
+  put(repo, "claude/CLAUDE.md", "# repo\n");
+  put(home, ".claude/CLAUDE.md", "# machine\n");
+}
 
 test("deploy writes everything into an empty home, then all is in sync", () => {
   const { repo, home } = fixture();
@@ -110,6 +123,43 @@ test("an invalid settings.json is left untouched by deploy and capture", () => {
   capture(repo, home);
   assert.equal(get(repo, "claude/settings.json"), formatJson({ model: "opus", effortLevel: "xhigh" }));
   assert.equal(summarize(results).exitCode, 1);
+});
+
+test("capture keeps a conflicting repo file that has uncommitted changes", () => {
+  const { repo, home } = fixture();
+  committed(repo);
+  conflictOnClaudeMd(repo, home);
+  const result = capture(repo, home).find((r) => r.target.home === ".claude/CLAUDE.md");
+  assert.equal(result.action, undefined);
+  assert.match(result.error, /uncommitted changes/);
+  assert.equal(get(repo, "claude/CLAUDE.md"), "# repo\n");
+});
+
+test("capture takes the machine side of a conflict when the repo file is committed", () => {
+  const { repo, home } = fixture();
+  conflictOnClaudeMd(repo, home);
+  committed(repo);
+  assert.equal(capture(repo, home).find((r) => r.target.home === ".claude/CLAUDE.md").action, "captured");
+  assert.equal(get(repo, "claude/CLAUDE.md"), "# machine\n");
+});
+
+test("capture keeps a conflicting repo file when git cannot tell whether it changed", () => {
+  const { repo, home } = fixture();
+  conflictOnClaudeMd(repo, home);
+  capture(repo, home);
+  assert.equal(get(repo, "claude/CLAUDE.md"), "# repo\n");
+});
+
+test("plugins are blocked while settings.json is unreadable", () => {
+  const { repo, home } = fixture();
+  put(home, ".claude/settings.json", "{ broken");
+  assert.equal(pluginBlocker(deploy(repo, home)), "~/.claude/settings.json is unreadable");
+});
+
+test("plugins are not blocked by a settings.json conflict", () => {
+  const { repo, home } = fixture();
+  put(home, ".claude/settings.json", formatJson({ model: "sonnet" }));
+  assert.equal(pluginBlocker(deploy(repo, home)), null);
 });
 
 test("the CLI rejects an unknown command with usage and exit code 2", () => {

@@ -38,7 +38,7 @@ test("settings compare only the shared keys", () => {
 
 test("CRLF and a BOM on the machine are not an edit", () => {
   const { repo, home } = fixture();
-  put(home, ".claude/CLAUDE.md", "﻿# me\r\n");
+  put(home, ".claude/CLAUDE.md", "\uFEFF# me\r\n");
   assert.equal(statuses(inspect(repo, home))[".claude/CLAUDE.md"], "in-sync");
 });
 

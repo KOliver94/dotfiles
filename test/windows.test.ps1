@@ -25,4 +25,31 @@ Assert-Equal (Get-ShimProblem 'python' @("$($shimsDir.ToUpperInvariant())\python
 Assert-Equal (Get-ShimProblem 'python' @($stub, "$shimsDir\python.exe") $shims) "python resolves to $stub before mise's shim" 'something ahead of the shim is reported'
 Assert-Equal (Get-ShimProblem 'node' @() $shims) 'node not found on PATH' 'a missing command is reported'
 
+Assert-Equal (Add-PathEntryBefore "$shims;C:\a;$apps" $shims $apps) "$shims;C:\a;$apps" 'an entry already ahead of the anchor stays where it is'
+
+$localBin = '%USERPROFILE%\.local\bin'
+Assert-Equal (Add-PathEntryLast "C:\a;$apps" $localBin) "C:\a;$apps;$localBin" 'appends a missing entry'
+Assert-Equal (Add-PathEntryLast "C:\a;$env:USERPROFILE\.local\bin\" $localBin) "C:\a;$env:USERPROFILE\.local\bin\" 'leaves an entry that is there in expanded form'
+Assert-Equal (Add-PathEntryLast '' $localBin) $localBin 'appends to an empty PATH'
+
+$failures = New-Object System.Collections.Generic.List[string]
+Invoke-Step 'broken step' { throw 'boom' } $failures
+Assert-Equal ($failures -join '|') 'broken step (boom)' 'a throwing step is recorded and the run goes on'
+$script:ran = $false
+Invoke-Step 'dry step' { $script:ran = $true } $failures -DryRun
+Assert-Equal $script:ran $false 'a dry run never executes the step'
+
+Assert-Equal (Invoke-Quiet { cmd /c 'echo noise 1>&2 & exit 3' }) 3 'stderr from a native command does not stop a Stop-mode script'
+
+# Run as the web entry does (a script block, so no $PSScriptRoot); git must exist, or it would try to install it.
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    $notAClone = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
+    New-Item -ItemType Directory -Path $notAClone | Out-Null
+    $entry = [scriptblock]::Create((Get-Content -Raw (Join-Path $PSScriptRoot '..\bootstrap.ps1')))
+    $message = ''
+    try { & $entry -Path $notAClone *> $null } catch { $message = $_.Exception.Message }
+    Assert-Equal ($message -like "No dotfiles clone at $notAClone*") $true 'the web entry stops with a message when the folder is not a clone'
+    Remove-Item -Recurse -Force $notAClone
+}
+
 if ($script:failed) { exit 1 }

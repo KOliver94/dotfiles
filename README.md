@@ -10,7 +10,7 @@ In PowerShell, as your own user (not elevated):
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/KOliver94/dotfiles/main/bootstrap.ps1)))
 ```
 
-It installs Git, clones this repo to `~\dotfiles` and continues from the clone: the tools in `tools.json` that are missing (never upgrading anything), mise's shims on the user PATH ahead of `WindowsApps`, the runtimes from `mise/config.toml`, then `node sync.mjs deploy`. It ends with the steps that need a person: `gh auth login`, 1Password's SSH agent, Docker Desktop's first run, IDEs through JetBrains Toolbox.
+It installs Git, clones this repo to `~\dotfiles` and continues from the clone: the tools in `tools.json` that are missing (never upgrading anything), mise's shims on the user PATH ahead of `WindowsApps`, the runtimes from `mise/config.toml`, then `node sync.mjs deploy`. It ends with the steps that need a person: `gh auth login` (answer No to authenticating Git: Git Credential Manager already does, and a yes rewrites `~/.gitconfig`), 1Password's SSH agent, Docker Desktop's first run, IDEs through JetBrains Toolbox.
 
 Machine-specific git settings (`safe.directory`, credential helpers) go into `~/.gitconfig.local`, which `~/.gitconfig` includes and which is never synced.
 
@@ -33,9 +33,9 @@ node sync.mjs capture   # copy edits made on this machine into the clone, then r
 node sync.mjs deploy    # after git pull: apply repo changes to this machine
 ```
 
-`deploy` never overwrites a file edited on the machine since the last sync; it reports `machine-edit` or `conflict` and exits 1. `capture` brings those edits into the clone, where git shows them as a diff and resolves conflicts with what you pulled. Discard a captured change with `git checkout` and the next `deploy` restores the repo version. `deploy --force` overwrites from the repo.
+`deploy` never overwrites a file edited on the machine since the last sync; it reports `machine-edit` or `conflict` and exits 1. `capture` brings those edits into the clone, where git shows them as a diff and resolves conflicts with what you pulled. It skips a conflict whose repo copy has uncommitted changes, since git could not give that work back: commit or discard it first. Discard a captured change with `git checkout` and the next `deploy` restores the repo version. `deploy --force` overwrites from the repo.
 
-`claude/settings.json` holds only the shared keys. On deploy they replace their values in `~/.claude/settings.json` and every other key stays; capture copies those keys back. To share a machine-only key, add it to the repo file. Deploy also adds the marketplaces and installs the plugins the shared settings enable; it never uninstalls.
+`claude/settings.json` holds only the shared keys. On deploy they replace their values in `~/.claude/settings.json` and every other key stays; capture copies those keys back. To share a machine-only key, add it to the repo file. Deploy also adds the marketplaces and installs the plugins the shared settings enable; it never uninstalls, and it skips plugins while `~/.claude/settings.json` is unreadable, because installing one writes that file.
 
 ## What syncs
 

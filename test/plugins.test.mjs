@@ -52,6 +52,33 @@ test("a failure is reported on one line and the rest continues", () => {
   assert.ok(calls.includes("plugin install caveman@caveman --scope user"));
 });
 
+test("a failed install reports the CLI's own error, not execFileSync's", () => {
+  const { run } = fake({ marketplaces: [{ name: "caveman" }], plugins: [{ id: "github@claude-plugins-official" }] });
+  const failing = (args) => {
+    if (args[1] === "install") {
+      throw Object.assign(new Error("Command failed: claude plugin install caveman@caveman --scope user"), {
+        stderr: "\nPlugin caveman not found in marketplace caveman\n",
+      });
+    }
+    return run(args);
+  };
+  const result = syncPlugins(shared, failing);
+  assert.deepEqual(result.lines, [`${"failed".padEnd(14)}plugin caveman@caveman: Plugin caveman not found in marketplace caveman`]);
+});
+
+test("a failing list command is reported, not thrown", () => {
+  const run = () => {
+    throw Object.assign(new Error("Command failed: claude plugin list --json"), { stderr: "not logged in\n" });
+  };
+  assert.deepEqual(syncPlugins(shared, run), { lines: [`${"failed".padEnd(14)}plugins: not logged in`], failed: true });
+});
+
+test("unparsable list output is reported, not thrown", () => {
+  const result = syncPlugins(shared, () => "not json");
+  assert.equal(result.failed, true);
+  assert.match(result.lines[0], /^failed\s+plugins: /);
+});
+
 test("a missing claude CLI skips the step", () => {
   const run = () => {
     throw Object.assign(new Error("spawnSync claude ENOENT"), { code: "ENOENT" });
