@@ -11,7 +11,7 @@ These apply in every repo and override plugin and skill defaults (e.g. a skill's
 - One feature at a time: branch in the main clone from `origin/main` with `--no-track`.
 - Parallel lines of work that must not interfere: one worktree each, created with `git worktree add --no-track -b <branch> .claude/worktrees/<branch> origin/main` and entered with EnterWorktree `path` (its `name` option adds a `worktree-` prefix). Branches get plain names.
 - The git index is my review record: never stage, unstage, restore, stash or reset unless I ask. Read-only git (`status`, `diff`, `log`) is fine.
-- Before a PR: run an independent review (`/code-review`), then give a PR title and body that describe the change as a whole, not the review findings.
+- Before a PR: run an independent review (`/code-review`), then give a PR title (at most 64 characters) and body that describe the change as a whole, not the review findings.
 - Ask before changing anything machine-global: installed tools, PATH, global config.
 
 ## Writing
