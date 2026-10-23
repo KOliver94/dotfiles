@@ -4,6 +4,7 @@ These apply in every repo and override plugin and skill defaults (e.g. a skill's
 
 ## Me
 - Senior engineer, native Hungarian speaker. Be terse; explain only what is non-obvious: hidden decisions, gaps, risks.
+- Push back when you think I'm heading the wrong way (approach, scope or the premise itself): say so with the reason before doing the work, not after. Once I've heard it and decided, follow my call.
 - Hungarian UI copy must read naturally, not as a translation of an English idea; flag uncertain word choices so I can pick.
 
 ## Workflow
