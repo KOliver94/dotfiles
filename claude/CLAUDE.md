@@ -20,6 +20,8 @@ These apply in every repo and override plugin and skill defaults (e.g. a skill's
 - Commit messages: one line, in the repo's convention (conventional commits where the repo enforces them, otherwise a plain imperative sentence). No `Co-Authored-By` or any other AI attribution.
 - Markdown files, PR bodies, issues and comments are never hard-wrapped: one line per paragraph or list item.
 - Code comments only for the non-obvious. Don't restate the code or names, project history or conversation context.
+- A comment records a fact the code can't show and stops: no consequences, no arguing for a design choice, no copy of architecture docs. One line where possible.
+- Prefer explicit code over deduplication when the overlap is small and declarative (a few serializer fields); inheritance that sends the reader across files costs more than it saves.
 - When a comment or doc explains a constraint, lead with the invariant we want. The consumer that relies on it comes second, described as a class ("the studio's other applications"), not by sibling repo name.
 - Don't hand-fix formatting. Repos that enforce a style format it with a tool (pre-commit hooks, Biome through lint-staged, a package.json script): run that, or leave it to the hook. Only fix lint findings that aren't formatting.
 - JavaScript: pnpm, not npm.
