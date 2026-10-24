@@ -2,7 +2,9 @@
 node = "24"
 python = "3.15"
 uv = "latest"
-"pipx:pre-commit" = "latest"
+# PyYAML (a pre-commit dependency) ships no Windows wheel for 3.15 yet, and building it needs MSVC.
+# Hook environments inherit this interpreter too. Move it to the default once PyYAML catches up.
+"pipx:pre-commit" = { version = "latest", python = "3.14" }
 
 [settings]
 idiomatic_version_file_enable_tools = ["node", "python"]
