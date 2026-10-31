@@ -1,5 +1,5 @@
 [tools]
-node = "24"
+node = "26"
 python = "3.15"
 uv = "latest"
 # PyYAML (a pre-commit dependency) ships no Windows wheel for 3.15 yet, and building it needs MSVC.
