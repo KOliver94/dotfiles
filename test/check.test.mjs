@@ -16,7 +16,7 @@ function fixture() {
   const home = tmp();
   put(repo, "claude/CLAUDE.md", "# me\n");
   put(repo, "claude/settings.json", formatJson({ model: "opus" }));
-  put(repo, "git/ignore", ".idea/\n");
+  put(repo, "claude/statusline.sh", "exit 0\n");
   return { repo, home };
 }
 const statuses = (results) => Object.fromEntries(results.map((r) => [r.target.home, r.status]));
@@ -26,7 +26,7 @@ test("an empty home is all missing", () => {
   assert.deepEqual(statuses(inspect(repo, home)), {
     ".claude/CLAUDE.md": "missing",
     ".claude/settings.json": "missing",
-    ".config/git/ignore": "missing",
+    ".claude/statusline.sh": "missing",
   });
 });
 
@@ -65,6 +65,6 @@ test("summarize passes when everything is in sync", () => {
   const { repo, home } = fixture();
   put(home, ".claude/CLAUDE.md", "# me\n");
   put(home, ".claude/settings.json", formatJson({ model: "opus" }));
-  put(home, ".config/git/ignore", ".idea/\n");
+  put(home, ".claude/statusline.sh", "exit 0\n");
   assert.equal(summarize(inspect(repo, home)).exitCode, 0);
 });

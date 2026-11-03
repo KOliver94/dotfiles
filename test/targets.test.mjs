@@ -18,11 +18,23 @@ test("lists only the mapped files the repo has", () => {
   put(repo, "claude/settings.json", "{}\n");
   put(repo, "git/ignore");
   put(repo, "README.md");
-  assert.deepEqual(listTargets(repo), [
+  assert.deepEqual(listTargets(repo, "win32"), [
     { repo: "claude/CLAUDE.md", home: ".claude/CLAUDE.md", kind: "file" },
     { repo: "claude/settings.json", home: ".claude/settings.json", kind: "settings" },
     { repo: "git/ignore", home: ".config/git/ignore", kind: "file" },
   ]);
+});
+
+test("off Windows only the Claude Code files are listed", () => {
+  const repo = tmp();
+  put(repo, "claude/CLAUDE.md");
+  put(repo, "claude/skills/commit/SKILL.md");
+  put(repo, "git/gitconfig");
+  put(repo, "mise/config.toml");
+  assert.deepEqual(
+    listTargets(repo, "darwin").map((t) => t.home),
+    [".claude/CLAUDE.md", ".claude/skills/commit/SKILL.md"],
+  );
 });
 
 test("expands synced directories into their files, in a stable order", () => {

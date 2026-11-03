@@ -19,7 +19,7 @@ function fixture() {
   const home = tmp();
   put(repo, "claude/CLAUDE.md", "# me\n");
   put(repo, "claude/settings.json", formatJson({ model: "opus", effortLevel: "xhigh" }));
-  put(repo, "git/ignore", ".idea/\n");
+  put(repo, "claude/statusline.sh", "exit 0\n");
   return { repo, home };
 }
 const statuses = (results) => Object.fromEntries(results.map((r) => [r.target.home, r.status]));

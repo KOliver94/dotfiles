@@ -1,6 +1,6 @@
 # dotfiles
 
-My Windows workstation setup: dev tools, runtime versions through mise, Claude Code and git. One bootstrap for a fresh machine, and a sync script that keeps machines and this repo in step without overwriting edits made on a machine.
+My Windows workstation setup: dev tools, runtime versions through mise, Claude Code and git. One bootstrap for a fresh machine, and a sync script that keeps machines and this repo in step without overwriting edits made on a machine. On macOS it shares only the Claude Code setup.
 
 ## Fresh machine
 
@@ -25,6 +25,17 @@ node sync.mjs deploy --force
 
 Anything built on the removed Python keeps pointing at it: run `pre-commit install` again in every repo with a pre-commit hook (otherwise the hook starts a dead interpreter and commits fail), and recreate virtual environments with uv. Close editors first; a language server running on the old Python blocks its uninstall.
 
+## macOS
+
+Only the `claude/` files sync; git, mise and the tools stay as the Mac has them. Install Claude Code and any recent Node (Homebrew, mise), then:
+
+```bash
+git clone https://github.com/KOliver94/dotfiles.git ~/dotfiles
+cd ~/dotfiles && node sync.mjs deploy
+```
+
+Deploy installs the plugins only when `claude` is on PATH; otherwise it reports `skipped` and succeeds.
+
 ## Daily loop
 
 ```bash
@@ -38,6 +49,8 @@ node sync.mjs deploy    # after git pull: apply repo changes to this machine
 `claude/settings.json` holds only the shared keys. On deploy they replace their values in `~/.claude/settings.json` and every other key stays; capture copies those keys back. To share a machine-only key, add it to the repo file. Deploy also adds the marketplaces and installs the plugins the shared settings enable; it never uninstalls, and it skips plugins while `~/.claude/settings.json` is unreadable, because installing one writes that file.
 
 ## What syncs
+
+On macOS only the `claude/` rows.
 
 | Repo | Machine |
 | --- | --- |
