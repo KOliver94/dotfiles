@@ -43,7 +43,7 @@ node sync.mjs deploy    # after git pull: apply repo changes to this machine
 | --- | --- |
 | `claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `claude/settings.json` | shared keys of `~/.claude/settings.json` |
-| `claude/statusline.ps1` | `~/.claude/statusline.ps1` |
+| `claude/statusline.sh` | `~/.claude/statusline.sh` |
 | `claude/skills/`, `agents/`, `rules/`, `output-styles/`, `keybindings.json` | same under `~/.claude/`, once they exist here |
 | `git/gitconfig` | `~/.gitconfig` |
 | `git/ignore` | `~/.config/git/ignore` |
