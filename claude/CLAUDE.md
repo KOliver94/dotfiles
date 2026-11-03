@@ -25,6 +25,7 @@ These apply in every repo and override plugin and skill defaults (e.g. a skill's
 - When a comment or doc explains a constraint, lead with the invariant we want. The consumer that relies on it comes second, described as a class ("the studio's other applications"), not by sibling repo name.
 - Don't hand-fix formatting. Repos that enforce a style format it with a tool (pre-commit hooks, Biome through lint-staged, a package.json script): run that, or leave it to the hook. Only fix lint findings that aren't formatting.
 - JavaScript: pnpm, not npm.
+- Java: use the current language level (Java 25): `static void main` without `public`, records, pattern matching, `_` for unused variables.
 
 ## Memory
 - A convention that applies across repos belongs here, not in project memory: propose an edit to ~/.claude/CLAUDE.md, and I capture it into the dotfiles repo.
