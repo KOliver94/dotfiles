@@ -18,9 +18,13 @@ defaults:
 
 jobs:
   test:
-    name: Test
-    runs-on: windows-latest
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,4 +40,5 @@ jobs:
         run: node --test "test/*.test.mjs"
 
       - name: Test bootstrap helpers
+        if: runner.os == 'Windows'
         run: powershell -NoProfile -ExecutionPolicy Bypass -File test/windows.test.ps1
