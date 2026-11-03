@@ -1,6 +1,6 @@
 # dotfiles
 
-My Windows workstation setup: dev tools, runtime versions through mise, Claude Code and git. One bootstrap for a fresh machine, and a sync script that keeps machines and this repo in step without overwriting edits made on a machine. On macOS it shares only the Claude Code setup.
+My Windows workstation setup: dev tools, runtime versions through mise, Claude Code and git. One bootstrap for a fresh machine, and a sync script that keeps machines and this repo in step without overwriting edits made on a machine. On macOS, Linux and WSL it shares only the Claude Code setup.
 
 ## Fresh machine
 
@@ -25,9 +25,9 @@ node sync.mjs deploy --force
 
 Anything built on the removed Python keeps pointing at it: run `pre-commit install` again in every repo with a pre-commit hook (otherwise the hook starts a dead interpreter and commits fail), and recreate virtual environments with uv. Close editors first; a language server running on the old Python blocks its uninstall.
 
-## macOS
+## macOS and Linux
 
-Only the `claude/` files sync; git, mise and the tools stay as the Mac has them. Install Claude Code and any recent Node (Homebrew, mise), then:
+Only the `claude/` files sync, under WSL too; git, mise and the tools stay as the machine has them. Install Claude Code and any recent Node (Homebrew, mise), then:
 
 ```bash
 git clone https://github.com/KOliver94/dotfiles.git ~/dotfiles
@@ -44,13 +44,15 @@ node sync.mjs capture   # copy edits made on this machine into the clone, then r
 node sync.mjs deploy    # after git pull: apply repo changes to this machine
 ```
 
-`deploy` never overwrites a file edited on the machine since the last sync; it reports `machine-edit` or `conflict` and exits 1. `capture` brings those edits into the clone, where git shows them as a diff and resolves conflicts with what you pulled. It skips a conflict whose repo copy has uncommitted changes, since git could not give that work back: commit or discard it first. Discard a captured change with `git checkout` and the next `deploy` restores the repo version. `deploy --force` overwrites from the repo.
+`deploy` never overwrites a file edited on the machine since the last sync; it reports `machine-edit` or `conflict` and exits 1. `capture` brings those edits into the clone, where git shows them as a diff and resolves conflicts with what you pulled. It skips a conflict whose repo copy has uncommitted changes, since git could not give that work back: commit or discard it first. Discard a captured change with `git checkout` and the next `deploy` restores the repo version. `deploy --force` overwrites from the repo. Nothing is ever deleted: a file the repo drops stays on each machine until you remove it there.
 
 `claude/settings.json` holds only the shared keys. On deploy they replace their values in `~/.claude/settings.json` and every other key stays; capture copies those keys back. To share a machine-only key, add it to the repo file. Deploy also adds the marketplaces and installs the plugins the shared settings enable; it never uninstalls, and it skips plugins while `~/.claude/settings.json` is unreadable, because installing one writes that file.
 
+The statusline runs through `bash`. On Windows that is Git Bash, which Claude Code uses for it whenever Git is installed; without Git it falls back to PowerShell and the statusline stays empty.
+
 ## What syncs
 
-On macOS only the `claude/` rows.
+Off Windows only the `claude/` rows.
 
 | Repo | Machine |
 | --- | --- |

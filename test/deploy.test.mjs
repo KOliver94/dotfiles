@@ -56,6 +56,18 @@ test("deploy --force merges shared settings into an existing file and keeps mach
   assert.ok(allInSync(repo, home));
 });
 
+test("deploy writes the git and mise files only on Windows", () => {
+  const { repo, home } = fixture();
+  put(repo, "git/gitconfig", "[user]\n");
+  put(repo, "mise/config.toml", "[tools]\n");
+  const written = deploy(repo, home).map((r) => r.target.home);
+  const windows = process.platform === "win32";
+  assert.equal(written.includes(".gitconfig"), windows);
+  assert.equal(existsSync(join(home, ".gitconfig")), windows);
+  assert.equal(existsSync(join(home, ".config/mise/config.toml")), windows);
+  assert.equal(get(home, ".claude/CLAUDE.md"), "# me\n");
+});
+
 test("deploy leaves a machine edit in place and fails", () => {
   const { repo, home } = fixture();
   deploy(repo, home);
