@@ -12,7 +12,9 @@
     { "id": "Helm.Helm", "command": "helm" },
     { "id": "AgileBits.1Password" },
     { "id": "JetBrains.Toolbox" },
-    { "id": "Microsoft.VisualStudioCode", "command": "code" }
+    { "id": "Microsoft.VisualStudioCode", "command": "code" },
+    { "id": "Microsoft.PowerToys" },
+    { "id": "AntibodySoftware.WizTree" }
   ],
   "scripts": [
     { "name": "Claude Code", "command": "claude", "url": "https://claude.ai/install.ps1" }
