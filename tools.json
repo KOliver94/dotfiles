@@ -7,7 +7,6 @@
     { "id": "Microsoft.PowerShell", "command": "pwsh" },
     { "id": "zizmor.zizmor", "command": "zizmor" },
     { "id": "rhysd.actionlint", "command": "actionlint" },
-    { "id": "max-sixty.worktrunk", "command": "git-wt" },
     { "id": "Docker.DockerDesktop", "command": "docker" },
     { "id": "Helm.Helm", "command": "helm" },
     { "id": "AgileBits.1Password" },
